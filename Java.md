@@ -539,7 +539,7 @@ super可理解为父类的
 
 ### 6.向下转型
 
-有了对象的多态性以后，内存中实际上是加载了子类特有的属性和方法的，但是由于变量声明为父类类型，导致//编译时，只能调用父类中声明的居性和方法。子类特有的属性和方法不能调用。
+有了对象的多态性以后，内存中实际上是加载了子类特有的属性和方法的，但是由于变量声明为父类类型，导致编译时，只能调用父类中声明的属性和方法。子类特有的属性和方法不能调用。
 
 ```java
 //如何才能调用子类特有的属性和方法？
@@ -1014,6 +1014,9 @@ final:最终的
 >抽象类中一定有构造器，便于子类实例化时调用（涉及:子类对象实例化的全过程)
 >
 >开发中，都会提供抽象类的子类，让子类对象实例化，完成相关的操作
+
+
+
 3.abstract修饰方法:抽象方法
 
 >抽象方法只有方法的声明，没有方法体
@@ -1071,3 +1074,245 @@ public static void method1(Person p){
 举例
 
 ![image-20211211230154424](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20211211230154424.png)
+
+1.接口
+
+使用interface来定义
+
+2.Java中,接口和类是并列的两个结构
+
+3.如何定义接口，定义接口中的成员
+
+​	3.1 JDK7及以前:只能定义全局常量和抽象方法
+
+>全局常量:public static final的.但是书写时，可以省略不写>抽象方法:public abstract的
+​	3.2. JDK8：除了定义全局常量和抽象方法之外，还可以定义静态方法、默认方法(略)
+
+4.接口中不能定义构造器的！意味着接口不可以实例化
+
+5.Java开发中，接口通过让类去实现(implements )的方式来使用。
+如果实现类覆盖了接口中的所有抽象方法，则此实现类就可以实例化。
+
+如果实现类没有覆盖接口中所有的抽象方法，则此实现类仍为一个抽象类
+
+6.Java类可以实现多个接口--->弥补了Java单继承性的局限性
+格式:class AA extends BB implements CC,DD, EE
+
+7．接口与接口之间可以继承,而且可以多继承
+
+*******************************
+8.接口的具体使用，体现多态性
+9.接口．实际上可以看做是—种规范
+
+```java
+Computer com=new Computer();
+//1.创建了接口的非匿名实现类的非匿名对象
+Flash flash=new Flash();
+com.transferData(flash);
+//2.创建了接口的非匿名实现类的匿名对象
+com.transferData(new Printer());
+//3.创建了接口的匿名实现类的非匿名对象
+USB phone=new USB(){
+    //重写方法
+}
+//4.创建了接口的匿名实现类的匿名对象
+com.transferData(new USB()){
+    //重写方法
+}
+```
+
+使用
+
+代理模式/工厂模式(略)
+
+### JDK8中的新特性
+
+```java
+//知识点1：接口中定义的静态方法，只能通过接口来调用`
+CompareA.method1();
+//知识点2:通过实现类的对象，可以调用接口中的默认方法。
+//如果实现类重写了接口中的默认方法，调用时，仍然调用的是重写以后的方法
+s.method2();
+//知识点3:如果子类(或实现类)继承的父类和实现的接口中声明了同名同参数的方法，
+//那么子类在没有重写此方法的情况下，默认调用的是父类中的同名同参数的方法。-->类优先原则
+//知识点4：如果实现类实现了多个接口，而这多个接口中定义了同名参数的默认方法，那么在实现类没有重写此方法的情况下，报错。
+//---接口冲突   这就需要我们必须在实现类中重写
+s.method3();
+```
+
+## 七、内部类
+
+1.Java中允许将一个类A声明在另一个类B中，则类A就是内部类，类B称为外部类。
+2.内部类的分类：成员内部类（静态、非静态）VS局部内部类(方法内、代码块内、构造器内）
+3.成员内部类：
+一方面，作为外部类的成员:
+
+>调用外部类的结构
+>
+>可以被static修饰
+>
+>可以被4种不同的权限修饰
+
+另一方面，作为一个类:
+
+> 类内可以定义属性、方法、构造器等
+>
+> 可以被final修饰，表示此类不能被继承。言外之意，不使用final，就可以被继承
+>
+> 可以被abstract修饰
+
+4.关注如下的3个问题
+
+​	4.1 如何实例化成员内部类的对象
+
+​	4.2如何在成员内部类中区分调用外部类的结构
+
+​	4.3 开发中局部内部类的使用
+
+```
+//创建Dog实例(静态的成员内部类)
+Person.Dog dog=new Person.Dog();
+dog.show();
+//创建Bird实例(非静态的成员内部类)
+//Person.Bird bird=new Person.Bird();//错误的
+Person p=new Person();
+Person.Bird bird=p.new Bird();
+bird.sing();
+```
+
+## 八、异常处理
+
+![image-20211219223108473](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20211219223108473.png)
+
+### Error
+
+Java虚拟机无法解决的严重问题。如:JVM系统内部错误、资源耗尽等严重情况。比如. StackOverflowError
+一般不编写针对性的代码进行处理。
+
+```java
+public class ErrorTest{
+	public static void main(String[] args){
+		//1.栈溢出：java.lang.StackOverflowError
+		main(args);
+		//2.堆溢出：java.lang.OutOfMemoryError
+        Integer[] arr=new Integer[1024*1024*1024];
+
+	}
+}
+```
+
+### 一、异常体系结构
+
+#### java.lang.Throwable
+
+##### java.lang.Error
+
+##### 一般不编写针对性的代码进行处理。		
+
+##### java.lang.Exception
+
+##### 可以进行异常的处理
+
+###### 				编译时异常(checked)
+
+​						l-----IOException
+
+​							l-----FileNotFoundException
+
+​						l-----ClassNotFoundException
+
+###### 				运行时异常(unchecked)
+
+​						l-----NullPointerException
+
+​						l---ArrayIndexOutOfBoundsException
+
+​						l---ClassCastException
+​						l--NumberFormatException
+
+​						l---InputMismatchException
+
+​						l---ArithmeticException
+
+### 二、异常的处理
+
+**抓抛模型**
+
+#### 过程一
+
+"抛"：程序在正常执行的过程中，一旦出现异常，就会在异常代码处生成一个对应异常类的对象。并将此对象抛出。
+
+一旦抛出对象以后，其后的代码就不再执行。
+
+
+
+#### 过程二
+
+“抓"：可以理解为异常的处理方式: ①try-catch-finally ②throws
+
+##### ①try-catch-finally的使用
+
+```java
+try{
+	//可能出现异常的代码
+}catch(异常类型1 变量名1){
+		//处理异常的方式1
+}catch(异常类型2 变量名2){
+		//处理异常的方式2
+}catch(异常类型3 变量名3){
+		//处理异常的方式3
+}
+
+.......
+
+finally{
+
+​	//一定会执行的代码
+
+}
+```
+
+说明:
+	1.finally是可选的。
+
+​	2.使用try将可能出现异常代码包装起来，在执行过程中，一旦出现异常，就会生成一个对应对象类的对象，根据此对象的类型，去catch中进行匹配
+
+​	3.一旦try中的异常对象匹配到某一个catch时，就进入catch中进行异常的处理。一旦处理完成，就跳出当前的try-catch结构(在没有写finally的情况)。继续执行其后的代码。
+
+​	4.catch中的异常类型如果没有子父类关系，则谁声明在上，谁声明在下无所谓。
+
+catch中的异常类型如果满足子父类关系，则要求子类一定声明在父类的上面。否则，报错。
+
+​	5.常用的异常对象处理的方式：①String getMessage() ② printStackTrace()
+
+​	6.在try结构中声明的变量，在出了try结构以后，就不能被调用
+
+**体会1：使用try-catch-finally处理编译时异常，使得程序在编译时就不再报错，但是运行时仍可能报错。相当于我们使用try-catch-finally将一个编译时可能出现的异常，延迟到运行时出现。**
+
+**体会2：开发中，由于运行时异常比较常见，所以我们通常就不针对运行时异常编写try-catch-finally了.**
+**针对于编译时异常，一定要考虑异常的处理。**
+
+
+
+##### ②throws+异常类型
+
+```java
+public void method2 throws FileNotFoundException,IOException{
+    method1();
+}
+
+
+
+public void method1() throws FileNotFoundException,IOException{
+    File file=new File("hello.text");
+FileInputStream fis=new FileInputStream(file);
+int data=fis.read();
+while(data!=-1){
+	System.out.println((char)data);
+    data =fis.read();
+}
+fis.close;
+    
+}
+```
+
